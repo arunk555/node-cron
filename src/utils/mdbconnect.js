@@ -4,9 +4,7 @@ const MONGODB_URL =
 
 const mdbconnet = async function () {
   try {
-    await mongoose.connect(MONGODB_URL, {
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(MONGODB_URL, {});
   } catch (error) {
     console.error(`Unable to connect: Error: ${error.name} - ${error.message}`);
     process.exit(1);

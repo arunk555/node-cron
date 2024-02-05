@@ -14,20 +14,23 @@ const FileSchema = new Schema({
 });
 
 FileSchema.static("writeFile", function (options, streamBuffer) {
-  return new Promise((resolve, rejects) => {
+  return new Promise((resolve, reject) => {
     const bucket = new GridFSBucket(mongoose.connection.db, {
       bucketName: "files",
     });
+    console.log(options.filename);
     const writeStream = bucket.openUploadStream(options.filename, {
       chunkSizeBytes: 261120,
       metadata: options,
       contentType: options.contentType,
     });
     const res = streamBuffer.pipe(writeStream);
+
     const extension = path.extname(options.filename).slice(1);
     const filename = options.filename.slice(0, extension.length + 1);
+
     writeStream.on("finish", () => {
-      ressolve({
+      resolve({
         _id: res.id.toString(),
         file: {
           filename: filename,
@@ -36,7 +39,7 @@ FileSchema.static("writeFile", function (options, streamBuffer) {
       });
     });
     writeStream.on("error", (err) => {
-      ressolve(err);
+      reject(err);
     });
   });
 });
